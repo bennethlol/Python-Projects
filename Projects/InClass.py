@@ -1,10 +1,10 @@
 # Void Functions - no parameters
 
-# Compute Pay 
+# negative or positive
 
-def computepay(hours, rate):
-    pay = int(hours) * int(rate)
-    print('Your pay is', pay, 'dollars.')
-
-computepay(input('How many hours do you work? '), input('How much is the hourly rate? '))
+num = float(input('Please enter a number: '))
+if num >= 0:
+    print('Positive')
+else:
+    print('Negative')
   

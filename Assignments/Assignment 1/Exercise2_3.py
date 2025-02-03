@@ -11,10 +11,27 @@ wholesale = (bookdis + 3) + ((bookdis + 0.75)*59)
 print('Total wholesale cost of 60 books is:',wholesale,'dollars.')
 
 # Question 3
-easy = 8.15
-tempo = 7.12
-print(easy*2)
-print(tempo*3)
-# The current time is 6:52 AM. According to the python interpreter, we have run for a total of 38 minutes and 6 seconds.
-# Therefore, you will reach home by 7:30 AM.
+def time(a):
+    hours = 6
+    minutes = 52
+    arrive = minutes + a
+    if arrive > 60:
+        arrive -= 60
+        hours += 1
+        msg = print('I will arrive at',hours,arrive,'AM')
+    return msg
+easymin = 8
+easysec = 15
+tempomin = 7
+temposec = 12
+
+totalmin = (easymin*2) + (tempomin*3)
+totalsec = (easysec*2) + (temposec*3)
+if totalsec > 60:
+    totalsec -= 60
+    totalmin += 1
+
+newtime = time(totalmin)
+print(newtime)
+
 

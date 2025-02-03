@@ -15,6 +15,6 @@ easy = 8.15
 tempo = 7.12
 print(easy*2)
 print(tempo*3)
-# The current time is 6:52 AM. According to the python interpretor, we have run for a total of 38 minutes and 6 seconds.
+# The current time is 6:52 AM. According to the python interpreter, we have run for a total of 38 minutes and 6 seconds.
 # Therefore, you will reach home by 7:30 AM.
 

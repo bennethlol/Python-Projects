@@ -5,5 +5,6 @@ d = 3
 
 print(a+b/c**d)
 
-# Same as 10 + (4/2^3)
-# Reason: Exponent first, then division, then addition/subtraction.
+# Observations:
+# The print statement is the same as 10 + (4/2^3) if you were doing regular math.
+# The reason why output is 10.5 is because it does exponent first, then division, then addition/subtraction.

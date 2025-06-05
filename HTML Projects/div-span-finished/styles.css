@@ -1,0 +1,16 @@
+body {
+    font-family:Arial, Helvetica, sans-serif
+}
+.yellow-bg {
+    background-color:yellow;
+}
+.blue-bg {
+    background-color:aquamarine;
+    color:blue;
+}
+
+div {
+    border:3px solid maroon;
+    background-color:lightpink;
+    padding:20px;
+}

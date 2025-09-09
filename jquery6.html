@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>jQuery6</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+    
+    <style>
+    #alert, #spinner  {
+        display:none;
+    }
+    </style>
+    
+</head>
+<body>
+
+     <div class="container">
+        <div class="row mt-2">
+           <header class="col-md-12">
+               <h2>Say Hello Application</h2>
+           </header>    
+           <div class="col-md-12">
+              <div class="form-group mt-2">
+               <label for="name">Full Name:</label>
+               <input id="name" type="text" class="form-control mt-2" placeholder="Enter your full name">
+             </div>
+           
+             <!-- classes: alert-danger and alert-success -->
+            <div id="alert" class="alert alert-warning mt-2" role="alert">
+                    <span id="alertClose" class="close" aria-hidden="true">&times;</span>
+                    <span id="msg"> </span>
+             </div>
+             
+            
+             <button type="button" id="btn" class="btn btn-success mt-2">
+                 <span id="spinner" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                 <span id="btnText">Say Hello</span>
+             </button>
+
+           </div>
+ 
+         </div>
+
+      </div>
+
+<script>
+    $(document).ready(initApp);
+
+    function initApp() {
+       var url = "https://babanski.com/files/ajax/hello.php";
+       
+       var $msg = $("#msg");
+       var $spinner = $("#spinner");
+       
+       var $btnText=$("#btnText");
+       var btnDefaultText=$btnText.text();
+
+       
+       var $name=$("#name");
+
+        // show popup and hide it after 2.5 secs
+        function showPopup(message) {
+             $msg.html(message).parent().show(1000);
+             setTimeout(  function() { $msg.parent().hide(1000);}, 2500 );
+        };
+
+        // We want to be able to "close" popup manually!
+        $("#alertClose").click(function(){
+                        $(this).parent().hide();
+        });
+
+
+       $.ajaxSetup({
+           url: url,
+           method: "POST",
+           dataType: "text",
+           cache: false,
+           timeout: 6000, // sets timeout to 6 seconds           
+           error: function() {
+               showPopup("Error: Cannot get data!");
+           },
+           success: function(data) { 
+                showPopup(data);
+           }
+       });
+
+       $(document).on("ajaxStart", function(){ 
+            $msg.parent().hide();
+            $spinner.css('display', 'inline-block');;
+            $btnText.text("Please Wait!");
+            
+        }).on("ajaxComplete", function(){ 
+            $spinner.css('display', 'none');;
+            $btnText.text(btnDefaultText);
+        });
+
+       $("#btn").click(function() {
+           
+            // Use $.ajaxSetup() and collect parameters from the form!!!
+            var name=$name.val().trim().split(/\s+/);
+
+            if (name.length < 2) {
+                    showPopup("Please provide First and Last name!");
+                    return;
+            }
+
+            var formData ={ f_name: name[0], l_name: name[1] };
+            $.ajax( {data: formData} );
+
+        });
+   };
+
+</script>
+</body>
+</html>

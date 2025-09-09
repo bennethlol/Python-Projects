@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment N2</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel='stylesheet' href='./css/moveme.css'/>
+</head>
+<body>
+    <div id="container">
+        <div id="ball"></div>
+        <div id="racket"></div>
+        <div id="shape"></div>
+        <div id="message"></div>
+    </div>
+
+    <script>
+    window.addEventListener("load", function load() {
+        window.removeEventListener("load", load);
+
+        var DOMElement = function(element, x_speed=0, y_speed=0) {
+            this.element = document.getElementById(element);
+            this.computedStyle = window.getComputedStyle(this.element);
+
+            this.x = parseInt(this.computedStyle.getPropertyValue('left'), 10);
+            this.y = parseInt(this.computedStyle.getPropertyValue('top'), 10);
+
+            this.width = parseInt(this.computedStyle.getPropertyValue('width'), 10);
+            this.height = parseInt(this.computedStyle.getPropertyValue('height'), 10);
+
+            this.x_speed = x_speed;
+            this.y_speed = y_speed;
+
+            this.hide = function () {
+                this.element.style.display = "none";
+            };
+
+            this.show = function (msg = null) {
+                if (msg) {
+                    this.element.textContent = msg;
+                }
+                this.element.style.display = "block";
+            };
+        
+            this.place = function(x = null, y = null) {
+                if (x !== null) { this.x = x; }
+                if (y !== null) { this.y = y; }
+                this.element.style.left = this.x + "px";
+                this.element.style.top = this.y + "px";
+            };
+
+            this.setDimensions = function(height = null, width = null) {
+                if (width !== null) {
+                    this.width = width;
+                    this.element.style.width = this.width + "px";
+                }
+                if (height !== null) {
+                    this.height = height;
+                    this.element.style.height = this.height + "px";
+                }
+            };
+
+            this.boundary = {
+                width: this.element.parentElement.clientWidth,
+                height: this.element.parentElement.clientHeight
+           };
+
+            this.collision = function(obj) {
+                return this.x < obj.x + obj.width &&
+                       this.x + this.width > obj.x &&
+                       this.y < obj.y + obj.height &&
+                       this.y + this.height > obj.y;
+            };
+        };
+
+        var Ball = function(element, x_speed, y_speed) {
+            DOMElement.call(this, element, x_speed, y_speed);
+
+            this.move = function(shape = null, racket = null) {
+               this.x += this.x_speed;
+                this.y += this.y_speed;
+
+                if (this.x <= 0) {
+                    this.x = 0;
+                    this.x_speed *= -1;
+                } else if (this.x + this.width >= this.boundary.width) {
+                    this.x = this.boundary.width - this.width;
+                    this.x_speed *= -1;
+                }
+
+                if (this.y <= 0) {
+                    this.y = 0;
+                    this.y_speed *= -1;
+                }
+
+                if (this.y + this.height >= this.boundary.height) {
+                    if (racket && this.collision(racket)) {
+                        if (this.y_speed > 0) {
+                            this.y_speed *= -1;
+                            this.y = racket.y - this.height; 
+                        }
+                    } else {
+                        if (this.height > this.y_speed) {
+                            this.setDimensions(this.height - 5, this.width);
+                        } else {
+                            gameOver("You lost");
+                            return;
+                        }
+                    }
+                }
+          
+                if (shape && this.collision(shape)) {
+                    gameOver("You win!");
+                    return;
+                }
+
+                this.place();
+            }.bind(this);
+
+            this.intervalID = null;
+
+            this.startMove = function(shape, racket) {
+                if (!this.intervalID) {
+                    this.intervalID = setInterval(this.move.bind(this), 20, shape, racket);
+                }
+            };
+
+            this.stopMove = function() {
+                if (this.intervalID) {
+                    clearInterval(this.intervalID);
+                    this.intervalID = null;
+                }
+            };
+        };
+
+        var Racket = function(element, x_speed = 7, y_speed = 0) {
+            DOMElement.call(this, element, x_speed, y_speed);
+
+            var that = this;
+
+            this.move = function(event) {
+                if (!event) return;
+                if (event.key === "ArrowLeft") {
+                    that.x -= that.x_speed;
+                    if (that.x < 0) that.x = 0;
+                    that.place();
+                } else if (event.key === "ArrowRight") {
+                    that.x += that.x_speed;
+                    if (that.x + that.width > that.boundary.width) {
+                        that.x = that.boundary.width - that.width;
+                    }
+                    that.place();
+                }
+            };
+        };
+
+        var message = new DOMElement("message");
+        var container = new DOMElement("container");
+        var shape = new DOMElement("shape");
+
+        function randomShapePlace() {
+            var size = Math.floor(Math.random() * 26) + 5; // 5 to 30
+            var x = Math.floor(Math.random() * (container.width - 200 - size)) + 200;
+            var y = Math.floor(Math.random() * (250 - size));
+            shape.setDimensions(size, size);
+            shape.place(x, y);
+        }
+        randomShapePlace();
+        shape.show();
+
+        var racket = new Racket("racket");
+        racket.show();
+
+        var ball = new Ball("ball", 2, 5);
+        ball.show();
+
+        ball.startMove(shape, racket);
+
+        window.addEventListener("keydown", racket.move);
+
+        var gameTimeout = setTimeout(function() {
+            if (ball.element.style.display !== "none") {
+                gameOver("Draw");
+            }
+        }, 20000);
+
+        function gameOver(msg) {
+            ball.stopMove();
+            ball.hide();
+            shape.hide();
+
+            if (msg === "You win!") {
+                message.element.style.backgroundColor = "blue";
+            } else if (msg === "You lost!") {
+                message.element.style.backgroundColor = "red";
+            } else if (msg === "Draw") {
+                message.element.style.backgroundColor = "green";
+            }
+
+            message.show(msg);
+
+            window.removeEventListener("keydown", racket.move);
+            clearTimeout(gameTimeout);
+        }
+
+    });
+    </script>
+    </body>
+</html>

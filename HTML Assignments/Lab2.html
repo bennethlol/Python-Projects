@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab N2</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    
+    <!-- PureCSS styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls"crossorigin="anonymous"><!-- comment -->
+
+    <style>
+        body {
+            margin-left: 40px;
+            margin-top: 40px;
+        }
+        #btn {
+            margin-top: 30px;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<h3>Book Signing Events</h3>
+<table class="pure-table pure-table-bordered">
+    <thead>
+        <tr>
+            <th>Event</th>            
+            <th>Author</th>
+            <th>Book</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<button id="btn" type="button" class="pure-button pure-button-primary">Load Data</button>
+<p class="error" id="error"></p>
+
+<script>
+document.addEventListener("DOMContentLoaded", initApp);
+
+function initApp() {
+    var btn = document.getElementById("btn");
+    var btnText = btn.textContent;
+    var tbody = document.querySelector("tbody");
+    var errorDisplay = document.getElementById("error");
+    var url = "https://babanski.com/files/ajax/lab2.xml";
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.OPENED) {
+            btn.textContent = "Please Wait!";
+            tbody.textContent = "";
+            errorDisplay.textContent = "";
+        } else if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.status === 200) {
+                var xml = xhr.responseXML;
+
+                if (!xml || !xml.getElementsByTagName("event").length) {
+                    errorDisplay.textContent = "Error: XML data cannot be parsed.";
+                    btn.textContent = "Re-" + btnText;
+                    return;
+                }
+
+                var rows = "";
+                var events = xml.getElementsByTagName("event");
+
+                for (var i = 0; i < events.length; i++) {
+                    var eventTitleElement = events[i].getElementsByTagName("title")[0];
+                    var eventTitle = eventTitleElement ? eventTitleElement.textContent : "Untitled";
+
+                    var signings = events[i].getElementsByTagName("signing")
+                    var printedEventTitle = false;
+
+                    for (var j = 0; j < signings.length; j++) {
+                        var authorElement = signings[j].getElementsByTagName("author")[0];
+                        var bookElement = signings[j].getElementsByTagName("book")[0];
+
+                        if (authorElement && bookElement) {
+                            var author = authorElement.textContent;
+                            var book = bookElement.textContent;
+                            var price = bookElement.getAttribute("price");
+
+                            rows += "<tr>"
+                                + "<td>" + (printedEventTitle ? "" : eventTitle) + "</td>"
+                                + "<td>" + author + "</td>"
+                                + "<td>" + book + "</td>"
+                                + "<td>" + price + "</td>"
+                                + "</tr>";
+
+                            printedEventTitle = true;
+                        }
+                    }
+                }
+
+                tbody.innerHTML = rows;
+            } else {
+                errorDisplay.textContent = "Error: XML file cannot be loaded.";
+            }
+            btn.textContent = "Re-" + btnText;
+        }
+    };
+
+    btn.addEventListener("click", loadData, false);
+
+    function loadData(event) {
+        event.preventDefault();
+        xhr.open("GET", url + "?" + (new Date()).getTime(), true);
+        xhr.timeout = 6000;
+        xhr.send();
+    }
+}
+</script>
+</body>
+</html>

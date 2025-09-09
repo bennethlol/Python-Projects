@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exercise 12.3</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <!-- https://purecss.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous"><!-- comment -->
+    
+    <style>
+        body  {
+            margin-left: 40px;
+            margin-top: 40px;
+        }
+        
+        #btn {
+            margin-top: 30px;
+        }
+        
+        .error {
+            color: red;
+        }        
+    </style>
+    
+</head>
+<body>
+<h3>Book Signing Event</h3>
+<table class="pure-table pure-table-bordered">
+    <thead>
+        <tr>
+            <th>Author</th>
+            <th>Book</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+    
+<button id="btn" type="button" class="pure-button pure-button-primary">Load Data</button>    
+
+<script>
+document.addEventListener("DOMContentLoaded", initApp);
+
+function initApp(){
+
+    var btn = document.getElementById("btn");
+    var btnText=btn.textContent;
+
+    // Let's cache some selectors:
+    var tbody=document.querySelector("tbody"); 
+    
+    var h3 = document.querySelector("h3");
+    var h3Text=h3.textContent; //default text of the <h3> header.
+
+    var url = "https://babanski.com/files/ajax/book_signing_event.json";
+
+    var data=null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function (evt) {
+
+        var rows=""; // we'll put all the rows for <tbody>
+
+        if (this.readyState == XMLHttpRequest.OPENED) {
+                btn.textContent = "Please Wait!";
+ 
+                tbody.textContent=""; // Reset what we have inside <tbody>
+
+                //Reset header to default
+                h3.textContent=h3Text;
+        }
+        else if (this.readyState == XMLHttpRequest.DONE) {
+            
+            // The server returns "200" status code: means we got the file
+            // Or it can return 404 or 500 or 30X status code: means we didn't get the file
+            
+            if (this.status == 200) {
+               
+               // We have to convert JSON into JavaScript object!
+               data = JSON.parse(this.responseText);
+                   
+               // Let's check that data is correct!-> i.e. data.section exists!
+               if (data && data.section) {
+                    
+                    // Change text of h3 header to title from JSON.
+                    if (data.section.title) {
+                        h3.textContent = data.section.title;
+                    }
+
+                    /* BAD BAD BAD CODE. Never Ever use it!
+                    rows += "<tr>"
+                          + "<td>" + data.section.signing[0].author.name + "</td>"
+                          + "<td>" + data.section.signing[0].book.title + "</td>"
+                          + "<td>" + data.section.signing[0].book.price + "</td>"
+                          + "</tr>";
+                    */
+
+                   // Slow loops: see Lecture notes!
+                   // Object.key(data.section.signing).forEach(function(key) {
+                   // data.section.signing.forEach(function(key) {
+                   
+                   // Acceptable loops:
+		   // for (const key in data.section.signing) {
+                   // for (var key = 0; key < data.section.signing.length; key++) {
+
+                    // The fastest loop:
+                    var i = 0; 
+                    var signing = data.section.signing;
+                    const len = signing.length;
+                    
+                    for (; i < len; i++) {
+
+                        const obj = signing[i];
+                        rows +=   "<tr>"
+                                + "<td>" + obj.author.title + " " + obj.author.name + "</td>"
+                                + "<td>" + obj.book.title + "</td>"
+                                + "<td>" + obj.book.price + "</td>"
+                                + "</tr>";
+                    }
+
+               } // This ends the "if (data.section)".
+               else {
+                   // We weren't able to parse data -> show a different error message.
+                   rows = '<tr><td = colspan="3" class="error">Error: cannot load data!</td></tr>';
+               }
+               
+            } 
+            else {
+                    // This is equivalent to both "error" and "timeout" events:
+                   rows = '<tr><td = colspan="3" class="error">Error: cannot load data!</td></tr>';
+            }
+
+            tbody.innerHTML = rows;
+            btn.textContent="Re-" + btnText;
+
+        }
+    };
+
+    btn.addEventListener("click", loadData, false); 
+
+    function loadData(event) {
+
+        event.preventDefault();
+
+	// If we use xhr.open("GET", url, true); then the browser will load from DISK cache!
+	// To see that try a different timeout below: xhr.timeout=60;
+        // To force loading JSON data from server and not cache we "create" dynamical URL by adding parameter ?time_in_seconds
+
+        xhr.open("GET", url + "?" + (new Date()).getTime(), true);
+
+	//In Internet Explorer, the timeout property may be set only after calling the open() method 
+	// and before calling the send() method.
+
+        xhr.timeout = 6000; // Change this to 60 and use xhr.open("GET", url, true) to see that file will be loaded from DISK.
+        
+        xhr.send();
+    };
+      
+    
+};
+ 
+</script>
+</body>
+</html>

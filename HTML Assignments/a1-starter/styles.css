@@ -3,3 +3,185 @@
     box-sizing:border-box;
     padding:0px;
 }
+
+body {
+    font-family: 'Fjalla One', Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+/* Reusable button */
+.button {
+    display: inline-block;
+    text-align: center;
+    border-radius: 25px;
+    padding: 10px 20px;
+    width: 160px;
+    margin-top: 0px;
+    background-color: #26D6C0;
+    color: white;
+    text-decoration: none;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #F9E22C;
+    color: #f78400;
+}
+
+/* The navigation bar */
+nav {
+    background-color: #F633A2;
+    text-align: center;
+    padding: 15px;
+}
+
+.nav-bar {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.nav-bar a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-bar a:hover {
+    color: #F9E22C;
+}
+
+/* Main/Title/Buy tickets area */
+.main {
+    background: url('assets/background.png') no-repeat center center/cover;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    color: white;
+    text-align: center;
+}
+.main h1 {
+    font-family: 'Rubik Moonrocks', Arial, sans-serif;
+    font-size: 100px;
+}
+.main h2 {
+    font-family: 'Fjalla One', Arial, sans-serif;
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+/* Lineup section */
+.lineup {
+    background-color: #EFEFEF;
+    padding: 40px 20px;
+    text-align: center;
+    color: #333;
+}
+
+.lineup h1 {
+    font-family: 'Rubik Moonrocks', Arial, sans-serif;
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.lineup p {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 8px;
+}
+
+/*Artist and show times*/
+table {
+    margin: 30px auto;
+    background-color: white;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 20px;
+}
+
+.day {
+    background-color: #F633A2;
+    color: white;
+    font-weight: bold;
+    font-family: 'Fjalla One', Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+    width: 60px;
+    white-space: nowrap;
+
+}
+
+.artists {
+    color: #333;
+}
+
+.pink {
+    color: #F633A2;
+    margin: 0 6px;
+}
+
+/*Tickets*/
+.tickets {
+    background-color: #F9E22C;
+    text-align: center;
+    padding: 40px 20px;
+    color: #F633A2;
+}
+
+.tickets h1 {
+    font-family: 'Rubik Moonrocks', Arial, sans-serif;
+    font-size: 60px;
+    margin-bottom: 14px;
+}
+
+.tickets p {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin-bottom: 30px; 
+}
+
+.ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.ticket-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    color: #333;
+}
+
+.ticket-card i {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.ticket-card h3 {
+    margin-top: 10px;
+}
+
+.price {
+    color: #F633A2;
+    font-size: 24px;
+    margin: 10px 0;
+    font-size: 50px;
+}
+
+/*Footer*/
+footer {
+    background-color: #000000;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+footer .logos i {
+    margin: 10px;
+    font-size: 20px;
+}
